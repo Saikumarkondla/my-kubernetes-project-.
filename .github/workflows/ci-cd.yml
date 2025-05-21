@@ -1,0 +1,28 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Kubernetes tools
+        run: |
+          curl -LO "https://storage.googleapis.com/kubernetes-release/release/v1.23.0/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          mv kubectl /usr/local/bin/
+
+      - name: Build & Push Docker Image
+        run: docker build -t my-app .
+
+      - name: Deploy to Minikube
+        run: kubectl apply -f deployment.yaml
+
+
+
